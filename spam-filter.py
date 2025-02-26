@@ -1,7 +1,7 @@
 from pathlib import Path
 
+import sys
 import argparse
-from sys import stderr
 
 
 def parse_args():
@@ -26,10 +26,10 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     if not args.input_dir.exists():
-        print(f"{args.input_dir}: not exists!", file=stderr)
+        print(f"{args.input_dir}: not exists!", file=sys.stderr)
     elif not args.input_dir.is_dir():
-        print(f"{args.input_dir}: not a directory!", file=stderr)
+        print(f"{args.input_dir}: not a directory!", file=sys.stderr)
     elif not args.keywords.exists():
-        print(f"{args.keywords}: not exists!", file=stderr)
+        print(f"{args.keywords}: not exists!", file=sys.stderr)
     else:
         pass
