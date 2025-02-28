@@ -7,14 +7,12 @@ def read_txt(filepath):
         return f.read()
 
 def read_docx(filepath):
-    paragraphs = Document(filepath).paragraphs
-    doc_text = [p.text for p in paragraphs]
-    tables = []
-    for table in tables:
+    document = Document(filepath)
+    doc_text = [p.text for p in document.paragraphs]
+    for table in document.tables:
         for row in table.rows:
             for cell in row.cells:
-                tables.append(cell.text)
-    doc_text.extend(tables)
+                doc_text.append(cell.text)
     return " ".join(doc_text)
 
 def read_pdf(filepath):
