@@ -1,8 +1,18 @@
 from pathlib import Path
 
+from trie import Trie
+from filetype import FileType
+from file_readers import read_txt
+from file_readers import read_pdf
+from file_readers import read_docx
+
+import os
 import sys
+import shutil
 import argparse
 
+MAX_SPAM_LEVEL = 0.1
+SPAM_DIR = "./spam" 
 
 def get_args_parsed():
     parser = argparse.ArgumentParser(
@@ -37,10 +47,67 @@ def is_args_correct(args):
         return False
     return True
 
+def fill_in(trie, keyword_path):
+    with open(keyword_path, "r", encoding="UTF-8") as f:
+        for keyword in f:
+            trie.insert(keyword.strip().lower())
+
+def create_trie(keywords):
+    trie = Trie()
+    fill_in(trie, keywords)
+    trie.set_suf_links()
+    return trie
+
+def make_spam_dir():
+    spam_dir = Path(SPAM_DIR)
+    if not spam_dir.exists():
+        os.makedirs(spam_dir)
+    return spam_dir            
+
+def is_supported_filetype(filepath):
+    if filepath.suffix == FileType.TXT:
+        return True
+    elif filepath.suffix == FileType.DOCX:
+        return True
+    elif filepath.suffix == FileType.PDF:
+        return True
+    return False
+
+def get_text(filepath):
+    if filepath.suffix == FileType.TXT:
+        return read_txt(filepath)
+    elif filepath.suffix == FileType.DOCX:
+        return read_docx(filepath)
+    elif filepath.suffix == FileType.PDF:
+        return read_pdf(filepath)
+    else:
+        return None
+
+def get_word_count(filepath):
+    count = 0
+    with open(filepath, "r") as f:
+        for line in f:
+            count += len(line.strip().split())
+    return count
+
 def main():
     args = get_args_parsed()
     if not is_args_correct(args):
-        return
+        return 
+    
+    trie = create_trie(args.keywords)
+    spam_dir = make_spam_dir()    
+
+    for filename in os.listdir(args.input_dir):
+        filepath = args.input_dir / Path(filename)
+        if not is_supported_filetype(filepath):
+            continue
+        if (word_count := get_word_count(filepath)) == 0:
+            continue
+        text = get_text(filepath)
+        pattern_count = trie.get_pattern_count(text)
+        if pattern_count / word_count >= MAX_SPAM_LEVEL:
+            shutil.move(filepath, spam_dir)
 
 if __name__ == "__main__":
     main()
