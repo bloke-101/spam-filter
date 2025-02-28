@@ -66,7 +66,7 @@ class Trie:
             return node.next[char]
         return node
 
-    def find_all_patterns(self, text):
+    def get_pattern_count(self, text):
         cur_node = self.__root
         count = 0
         for char in text:
