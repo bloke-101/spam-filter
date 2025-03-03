@@ -12,7 +12,8 @@ import shutil
 import argparse
 
 MAX_SPAM_LEVEL = 0.1
-SPAM_DIR = "./spam" 
+SPAM_DIR = "./spam"
+KEYWORD_DIR = "./keywords.txt" 
 
 def get_args_parsed():
     parser = argparse.ArgumentParser(
@@ -27,8 +28,8 @@ def get_args_parsed():
         "keywords",
         type=Path,
         nargs="?", 
-        default="./keywords.txt",
-        help="An input file for keywords (default: ./keywords.txt)"
+        default=KEYWORD_DIR,
+        help=f"An input file for keywords (default: {KEYWORD_DIR})"
     )
     return parser.parse_args()
 
