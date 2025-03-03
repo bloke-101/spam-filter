@@ -15,6 +15,7 @@ MAX_SPAM_LEVEL = 0.1
 SPAM_DIR = "./spam"
 KEYWORD_DIR = "./keywords.txt" 
 
+
 def get_args_parsed():
     parser = argparse.ArgumentParser(
         description="Filter files by keywords"
