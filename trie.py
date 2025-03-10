@@ -5,12 +5,6 @@ class Trie:
     def __init__(self):
         self.__root = Node()
 
-    def __is_root(self, node):
-        return node == self.__root
-
-    def __has_next(self, node, char):
-        return node.next.get(char)
-
     def insert(self, keyword):
         cur_node = self.__root
         for char in keyword:
@@ -20,20 +14,21 @@ class Trie:
         cur_node.is_end = True
 
     def __get_short_suf_link(self, node):
-        if not node.short_suf_link:
-            if node.suf_link.is_end:
-                node.short_suf_link = node.suf_link
-            elif node.is_end:
-                node.short_suf_link = node
-            elif node.suf_link.is_root:
-                node.short_suf_link = None
-            else:
-                link = self.__get_short_suf_link(node.suf_link)
-                node.short_suf_link = link
-        return node.short_suf_link
+        if node.short_suf_link:
+            return node.short_suf_link
+        elif node.suf_link.is_end:
+            return node.suf_link
+        elif node.is_end:
+            return node
+        elif self.__root == node.suf_link:
+            return None
+        else:
+            return self.__get_short_suf_link(node.suf_link)        
     
-    def __get_next_suf_link(self, node, char):
-        return node.next[char] if node.next.get(char) else node
+    def __go(self, node, char):
+        while not (node == self.__root or node.next.get(char)):
+            node = node.suf_link
+        return node.next.get(char, node)
     
     def set_suf_links(self):
         queue = []
@@ -49,23 +44,10 @@ class Trie:
             cur_node = queue.pop(0)
             for p_char, child in cur_node.next.items():
                 p_suf_link = cur_node.suf_link
-                is_root = self.__is_root(p_suf_link)
-                has_next = self.__has_next(p_suf_link, p_char)
-                while not (is_root or has_next):
-                    p_suf_link = p_suf_link.suf_link
-
-                next = self.__get_next_suf_link(p_suf_link, p_char)
-                short = self.__get_short_suf_link(cur_node)
-                child.suf_link = next
-                cur_node.short_suf_link = short
+                child.suf_link = self.__go(p_suf_link, p_char) 
+                short_suf_link = self.__get_short_suf_link(cur_node)
+                cur_node.short_suf_link = short_suf_link
                 queue.append(child)
-
-    def __go(self, node, char):
-        while not (node.is_root or node.next.get(char)):
-            node = node.suf_link
-        if node.next.get(char):
-            return node.next[char]
-        return node
 
     def get_pattern_count(self, text):
         cur_node = self.__root

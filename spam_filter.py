@@ -77,11 +77,11 @@ def is_supported_filetype(filepath):
 
 def get_text(filepath):
     if filepath.suffix == FileType.TXT:
-        return read_txt(filepath)
+        return read_txt(filepath).lower().strip()
     elif filepath.suffix == FileType.DOCX:
-        return read_docx(filepath)
+        return read_docx(filepath).lower().strip()
     elif filepath.suffix == FileType.PDF:
-        return read_pdf(filepath)
+        return read_pdf(filepath).lower().strip()
     else:
         return None
 
