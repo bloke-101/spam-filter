@@ -15,7 +15,7 @@ class Trie:
         cur_node = self.__root
         for char in keyword:
             if not cur_node.next.get(char):
-                cur_node.next[char] = Trie()
+                cur_node.next[char] = Node()
             cur_node = cur_node.next[char]
         cur_node.is_end = True
 
