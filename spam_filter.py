@@ -92,6 +92,14 @@ def get_word_count(filepath):
             count += len(line.strip().split())
     return count
 
+def show_spam_files(spam_files):
+    if not spam_files:
+        print("There is no spam!")
+        return
+    print("The following files has been marked as spam:")
+    for i, f in enumerate(spam_files, 1):
+        print(f"{i}. {f}")
+
 def main():
     args = get_args_parsed()
     if not is_args_correct(args):
@@ -100,6 +108,7 @@ def main():
     trie = create_trie(args.keywords)
     spam_dir = make_spam_dir()    
 
+    spam_files = []
     for filename in os.listdir(args.input_dir):
         filepath = args.input_dir / Path(filename)
         if not is_supported_filetype(filepath):
@@ -110,6 +119,8 @@ def main():
         pattern_count = trie.get_pattern_count(text)
         if pattern_count / word_count >= MAX_SPAM_LEVEL:
             shutil.move(filepath, spam_dir)
+            spam_files.append(filepath)
+    show_spam_files(spam_files)
 
 if __name__ == "__main__":
     main()
