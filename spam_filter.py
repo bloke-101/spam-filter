@@ -85,13 +85,6 @@ def get_text(filepath):
     else:
         return None
 
-def get_word_count(filepath):
-    count = 0
-    with open(filepath, "r") as f:
-        for line in f:
-            count += len(line.strip().split())
-    return count
-
 def show_spam_files(spam_files):
     if not spam_files:
         print("There is no spam!")
@@ -113,9 +106,9 @@ def main():
         filepath = args.input_dir / Path(filename)
         if not is_supported_filetype(filepath):
             continue
-        if (word_count := get_word_count(filepath)) == 0:
-            continue
         text = get_text(filepath)
+        if (word_count := len(text.strip().split())) == 0:
+            continue
         pattern_count = trie.get_pattern_count(text)
         if pattern_count / word_count >= MAX_SPAM_LEVEL:
             shutil.move(filepath, spam_dir)
