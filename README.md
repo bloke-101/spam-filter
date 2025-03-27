@@ -1,6 +1,6 @@
 # Spam-Filter
 
-The Spam-Filter is a CLI tool to filter files by keywords. If a file is
+**The Spam-Filter** is a CLI tool to filter files by keywords. If a file is
 marked as spam, the tool moves the file to the directory named as
 **./spam**.
 
